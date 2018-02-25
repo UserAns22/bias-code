@@ -79,7 +79,7 @@ warmth_direction = model_w.coef_
 competence_direction = model_c.coef_
 
 def create_embedding(syn0, vocab, index2word):
-    kv = gensim.models.KeyedVectors()
+    kv = gensim.models.KeyedVectors(300)
     kv.syn0 = np.array(syn0)
     kv.vocab = vocab
     kv.index2word = index2word
