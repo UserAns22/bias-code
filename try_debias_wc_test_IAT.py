@@ -105,7 +105,7 @@ pca = PCA().fit(X_vecs)
 comps = [c for c in pca.components_[:20]
          if np.abs(sim(c, warmth_direction)) > 0.15
          or np.abs(sim(c, competence_direction)) > 0.15]
-print(len(c))
+print(len(comps))
 word_vecs_debiased_new = remove_bias(word_vecs, comps)
 
 
