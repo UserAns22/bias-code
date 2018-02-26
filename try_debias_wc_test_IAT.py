@@ -83,10 +83,9 @@ competence_direction = model_c.coef_
 
 gender_direction = np.zeros(300)
 for row in gender_data.iterrows():
-   dif = (word_vecs[row['Feminine Word']] - word_vecs[row['Masculine Word']])
-   gender_direction += dif
-
-gender_direction = normalize(gender_direction)
+    row = row[1]
+    dif = (word_vecs[row['Feminine Word']] - word_vecs[row['Masculine Word']])
+    gender_direction += dif
 
 
 # """
@@ -115,7 +114,6 @@ word_vecs_debiased_gender = remove_bias(word_vecs, gender_direction)
 
 # pca = PCA().fit(word_vecs[european_names + african_american_names])
 pca = PCA().fit(X_vecs)
-top_comps
 comps = [c for c in pca.components_[:20]
          if np.abs(sim(c, warmth_direction)) > 0.15
          or np.abs(sim(c, competence_direction)) > 0.15]
