@@ -91,7 +91,7 @@ gender_direction = normalize(gender_direction)
 
 # """
 def create_embedding(syn0, vocab, index2word):
-    kv = gensim.models.KeyedVectors()
+    kv = gensim.models.KeyedVectors(300)
     kv.syn0 = np.array(syn0)
     kv.vocab = vocab
     kv.index2word = index2word
@@ -119,7 +119,7 @@ top_comps
 comps = [c for c in pca.components_[:20]
          if np.abs(sim(c, warmth_direction)) > 0.15
          or np.abs(sim(c, competence_direction)) > 0.15]
-print(len(c))
+print(len(comps))
 word_vecs_debiased_new = remove_bias(word_vecs, comps)
 
 
