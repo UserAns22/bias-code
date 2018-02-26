@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score, make_scorer
 from sklearn.decomposition import PCA
 
 from word2vec_utils import GoogleVec
-from reproduce_IAT import evaluate_embedding
+from reproduce_IAT import evaluate_embedding, effect_size
 
 sns.set_style('ticks')
 
@@ -41,6 +41,9 @@ d0 = pd.read_csv('./data/wc_ratings_unnormalized_typed.csv')
 d1 = pd.read_csv('./data/wc_validation2.csv')
 d2 = pd.read_csv('./data/wc_validation.csv')
 data = pd.concat([d0, d1, d2])
+
+gender_data = pd.read_csv('./gender_split.csv')
+
 # data = data.ix[data['type'] != 'state']
 # data = data.ix[(data['type'] != 'state') & (data['type'] != 'name')]
 # data = data.ix[data['type'] == 'name']
@@ -78,6 +81,15 @@ def sim(u, v):
 warmth_direction = model_w.coef_
 competence_direction = model_c.coef_
 
+gender_direction = np.zeros(300)
+for row in gender_data.iterrows():
+   dif = (word_vecs[row['Feminine Word']] - word_vecs[row['Masculine Word']])
+   gender_direction += dif
+
+gender_direction = normalize(gender_direction)
+
+
+# """
 def create_embedding(syn0, vocab, index2word):
     kv = gensim.models.KeyedVectors()
     kv.syn0 = np.array(syn0)
@@ -99,9 +111,11 @@ def remove_bias(wv, directions):
 word_vecs_debiased = remove_bias(word_vecs, [warmth_direction, competence_direction])
 word_vecs_debiased_warmth = remove_bias(word_vecs, warmth_direction)
 word_vecs_debiased_competence = remove_bias(word_vecs, competence_direction)
+word_vecs_debiased_gender = remove_bias(word_vecs, gender_direction)
 
 # pca = PCA().fit(word_vecs[european_names + african_american_names])
 pca = PCA().fit(X_vecs)
+top_comps
 comps = [c for c in pca.components_[:20]
          if np.abs(sim(c, warmth_direction)) > 0.15
          or np.abs(sim(c, competence_direction)) > 0.15]
@@ -125,5 +139,10 @@ print('word vecs debiased competence')
 evaluate_embedding(word_vecs_debiased_competence)
 
 print('')
+print('word vecs debiased gender')
+evaluate_embedding(word_vecs_debiased_gender)
+
+print('')
 print('word vecs debiased PCA')
 evaluate_embedding(word_vecs_debiased_new)
+# """
